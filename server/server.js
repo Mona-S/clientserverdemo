@@ -1,5 +1,9 @@
 const express = require("express");
 const cors = require("cors");
+const mysql = require("mysql");
+
+const creds = require("./mysqlcredentials.js");
+const db = mysql.createConnection(creds);
 
 const server = express();
 
@@ -31,7 +35,15 @@ server.get("/favfoods", (request,response) => {
 });
 
 server.get("/names", (request,response) => {
-    response.send(names);
+    db.connect( ()=>{
+        db.query("SELECT * FROM `names`", (error, data, fields)=>{
+            if(!error){
+                response.send(data);
+            }
+        })
+    } )
+    
+
 });
 
 server.listen(3001,() =>{ 
